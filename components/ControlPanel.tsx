@@ -1,6 +1,6 @@
 import React from "react";
 import { ALL_NOTES } from "@/lib/musicUtils";
-import { ControlPanelProps } from "@/types/music";
+import { ControlPanelProps, Note, ScaleType } from "@/types/music";
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
   settings,
@@ -25,7 +25,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             onChange={(e) =>
               onSettingsChange({
                 ...settings,
-                key: e.target.value as any,
+                key: e.target.value as Note,
               })
             }
             className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
@@ -48,7 +48,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             onChange={(e) =>
               onSettingsChange({
                 ...settings,
-                scaleType: e.target.value as any,
+                scaleType: e.target.value as ScaleType,
               })
             }
             className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
