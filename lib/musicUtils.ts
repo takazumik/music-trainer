@@ -20,14 +20,14 @@ export const ALL_NOTES: Note[] = [
 const ENHARMONIC_MAP: { [key: string]: string } = {
   // フラット → シャープ変換
   "Bb": "A#",
-  "Db": "C#", 
+  "Db": "C#",
   "Eb": "D#",
   "Gb": "F#",
   "Ab": "G#",
   // シャープ → フラット変換（逆引き用）
   "A#": "Bb",
   "C#": "Db",
-  "D#": "Eb", 
+  "D#": "Eb",
   "F#": "Gb",
   "G#": "Ab"
 };
@@ -118,7 +118,7 @@ export function isNoteInScale(note: string, scaleNotes: string[]): boolean {
   // オクターブを無視して音名のみで比較
   const noteWithoutOctave = note.replace(/\d+$/, "");
   const normalizedNote = normalizeNoteName(noteWithoutOctave);
-  
+
   return scaleNotes.some((scaleNote) => {
     const scaleNoteWithoutOctave = scaleNote.replace(/\d+$/, "");
     const normalizedScaleNote = normalizeNoteName(scaleNoteWithoutOctave);

@@ -125,11 +125,11 @@ export function useMidi(
         devices: [],
       });
     }
-  }, [handleMidiMessage]); // selectedDeviceIdを依存配列から削除
+  }, [handleMidiMessage, selectedDeviceId]);
 
   useEffect(() => {
     connectMidiDevices();
-  }, []); // 初回のみ実行
+  }, [connectMidiDevices]);
 
   return {
     midiStatus,
