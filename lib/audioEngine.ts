@@ -2,7 +2,6 @@ import * as Tone from "tone";
 
 class AudioEngine {
   private sampler: Tone.Sampler | null = null;
-  private buzzer: Tone.Oscillator | null = null;
   private isInitialized = false;
 
   async initialize() {
@@ -29,9 +28,6 @@ class AudioEngine {
         console.log("Sampler loaded successfully");
       },
     }).toDestination();
-
-    // ブザー音用のオシレーター
-    this.buzzer = new Tone.Oscillator(200, "square").toDestination();
 
     this.isInitialized = true;
   }
@@ -62,12 +58,15 @@ class AudioEngine {
   }
 
   playIncorrectSound() {
-    if (!this.buzzer || !this.isInitialized) return;
+    if (!this.isInitialized) return;
 
     // 不正解時はブザー音（200Hz, 300ms）
-    this.buzzer.start();
+    // 毎回新しいオシレーターを作成してメモリリークとクラッシュを防ぐ
+    const buzzer = new Tone.Oscillator(200, "square").toDestination();
+    buzzer.start();
     setTimeout(() => {
-      this.buzzer?.stop();
+      buzzer.stop();
+      buzzer.dispose(); // リソースを適切に解放
     }, 300);
   }
 
@@ -81,9 +80,6 @@ class AudioEngine {
   dispose() {
     if (this.sampler) {
       this.sampler.dispose();
-    }
-    if (this.buzzer) {
-      this.buzzer.dispose();
     }
     this.isInitialized = false;
   }
