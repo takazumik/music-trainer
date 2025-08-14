@@ -30,11 +30,30 @@ describe('musicUtils', () => {
         expect(hasNote).toBe(true)
       })
 
-      // Should NOT contain Bb (should be normalized to A#)
+            // Should NOT contain Bb (should be normalized to A#)
       const hasBb = scaleNotes.some(scaleNote =>
         scaleNote.replace(/\d+$/, '') === 'Bb'
       )
       expect(hasBb).toBe(false)
+    })
+
+    test('should preserve C# major scale without reverse conversion', () => {
+      const scaleNotes = getScaleNotes('C#', 'major')
+
+      // C# major should contain: C#, D#, F (from E#), F#, G#, A#, C (from B#)
+      const expectedNotes = ['C#', 'D#', 'F', 'F#', 'G#', 'A#', 'C']
+
+      expectedNotes.forEach(note => {
+        const hasNote = scaleNotes.some(scaleNote =>
+          scaleNote.replace(/\d+$/, '') === note
+        )
+        expect(hasNote).toBe(true)
+      })
+
+      // Should NOT be converted to Db major
+      const hasDbNotes = scaleNotes.some(note => note.includes('Db')) ||
+                        scaleNotes.some(note => note.includes('Eb'))
+      expect(hasDbNotes).toBe(false)
     })
   })
 
@@ -86,6 +105,26 @@ describe('musicUtils', () => {
       expect(isNoteInScale('C#4', aMinorNotes)).toBe(false)
       expect(isNoteInScale('F#4', aMinorNotes)).toBe(false)
       expect(isNoteInScale('G#4', aMinorNotes)).toBe(false)
+    })
+
+    test('should correctly identify notes in C# major scale', () => {
+      const cSharpMajorNotes = getScaleNotes('C#', 'major')
+
+      // These notes should be in C# major
+      expect(isNoteInScale('C#4', cSharpMajorNotes)).toBe(true)
+      expect(isNoteInScale('D#3', cSharpMajorNotes)).toBe(true)
+      expect(isNoteInScale('F4', cSharpMajorNotes)).toBe(true)  // from E#
+      expect(isNoteInScale('F#4', cSharpMajorNotes)).toBe(true)
+      expect(isNoteInScale('G#4', cSharpMajorNotes)).toBe(true)
+      expect(isNoteInScale('A#4', cSharpMajorNotes)).toBe(true)
+      expect(isNoteInScale('C5', cSharpMajorNotes)).toBe(true)  // from B#
+
+      // These notes should NOT be in C# major
+      expect(isNoteInScale('D4', cSharpMajorNotes)).toBe(false)
+      expect(isNoteInScale('E4', cSharpMajorNotes)).toBe(false)
+      expect(isNoteInScale('G4', cSharpMajorNotes)).toBe(false)
+      expect(isNoteInScale('A4', cSharpMajorNotes)).toBe(false)
+      expect(isNoteInScale('B4', cSharpMajorNotes)).toBe(false)
     })
   })
 })
