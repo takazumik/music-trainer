@@ -17,6 +17,7 @@ export const ALL_NOTES: Note[] = [
 ];
 
 // エンハーモニック（異名同音）の変換マップ
+// フラット記号をシャープ記号に統一（一方向のみ）
 const ENHARMONIC_MAP: { [key: string]: string } = {
   // フラット → シャープ変換
   "Bb": "A#",
@@ -24,17 +25,13 @@ const ENHARMONIC_MAP: { [key: string]: string } = {
   "Eb": "D#",
   "Gb": "F#",
   "Ab": "G#",
-  // 複雑な記号の変換（D#majorなど）
+  // 複雑な記号の変換（理論的な音名）
   "E#": "F",
   "B#": "C",
   "F##": "G",
   "C##": "D",
-  // シャープ → フラット変換（逆引き用）
-  "A#": "Bb",
-  "C#": "Db",
-  "D#": "Eb",
-  "F#": "Gb",
-  "G#": "Ab"
+  "G##": "A",  // A# major scale用
+  // NOTE: シャープ→フラット変換は削除（逆変換バグの原因）
 };
 
 // エンハーモニック変換関数
