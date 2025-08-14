@@ -127,4 +127,70 @@ describe('musicUtils', () => {
       expect(isNoteInScale('B4', cSharpMajorNotes)).toBe(false)
     })
   })
+
+  describe('comprehensive scale tests', () => {
+    // Test all 12 major scales with their expected notes (normalized)
+    const majorScaleTests = [
+      { key: 'C', expected: ['C', 'D', 'E', 'F', 'G', 'A', 'B'] },
+      { key: 'G', expected: ['G', 'A', 'B', 'C', 'D', 'E', 'F#'] },
+      { key: 'D', expected: ['D', 'E', 'F#', 'G', 'A', 'B', 'C#'] },
+      { key: 'A', expected: ['A', 'B', 'C#', 'D', 'E', 'F#', 'G#'] },
+      { key: 'E', expected: ['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#'] },
+      { key: 'B', expected: ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#'] },
+      { key: 'F#', expected: ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'F'] }, // E# → F
+      { key: 'C#', expected: ['C#', 'D#', 'F', 'F#', 'G#', 'A#', 'C'] }, // E# → F, B# → C
+      { key: 'F', expected: ['F', 'G', 'A', 'A#', 'C', 'D', 'E'] },       // Bb → A#
+      { key: 'A#', expected: ['A#', 'C', 'D', 'D#', 'F', 'G', 'A'] },     // B# → C, C## → D, E# → F, F## → G, G## → A
+      { key: 'D#', expected: ['D#', 'F', 'G', 'G#', 'A#', 'C', 'D'] },    // Complex enharmonics normalized
+      { key: 'G#', expected: ['G#', 'A#', 'C', 'C#', 'D#', 'F', 'G'] },   // Complex enharmonics normalized
+    ];
+
+    const minorScaleTests = [
+      { key: 'A', expected: ['A', 'B', 'C', 'D', 'E', 'F', 'G'] },
+      { key: 'E', expected: ['E', 'F#', 'G', 'A', 'B', 'C', 'D'] },
+      { key: 'B', expected: ['B', 'C#', 'D', 'E', 'F#', 'G', 'A'] },
+      { key: 'F#', expected: ['F#', 'G#', 'A', 'B', 'C#', 'D', 'E'] },
+      { key: 'C#', expected: ['C#', 'D#', 'E', 'F#', 'G#', 'A', 'B'] },
+      { key: 'G#', expected: ['G#', 'A#', 'B', 'C#', 'D#', 'E', 'F#'] },
+      { key: 'D#', expected: ['D#', 'F', 'F#', 'G#', 'A#', 'B', 'C#'] }, // E# → F
+      { key: 'A#', expected: ['A#', 'C', 'C#', 'D#', 'F', 'F#', 'G#'] }, // B# → C
+      { key: 'D', expected: ['D', 'E', 'F', 'G', 'A', 'A#', 'C'] },       // Bb → A#
+      { key: 'G', expected: ['G', 'A', 'A#', 'C', 'D', 'D#', 'F'] },      // Bb → A#, Eb → D#
+      { key: 'C', expected: ['C', 'D', 'D#', 'F', 'G', 'G#', 'A#'] },     // Eb → D#, Ab → G#, Bb → A#
+      { key: 'F', expected: ['F', 'G', 'G#', 'A#', 'C', 'C#', 'D#'] },    // Ab → G#, Bb → A#, Db → C#, Eb → D#
+    ];
+
+    test.each(majorScaleTests)('$key major scale should contain correct notes', ({ key, expected }) => {
+      const scaleNotes = getScaleNotes(key as any, 'major');
+
+      expected.forEach(note => {
+        const hasNote = scaleNotes.some(scaleNote =>
+          scaleNote.replace(/\d+$/, '') === note
+        );
+        expect(hasNote).toBe(true);
+      });
+    });
+
+    test.each(minorScaleTests)('$key minor scale should contain correct notes', ({ key, expected }) => {
+      const scaleNotes = getScaleNotes(key as any, 'minor');
+
+      expected.forEach(note => {
+        const hasNote = scaleNotes.some(scaleNote =>
+          scaleNote.replace(/\d+$/, '') === note
+        );
+        expect(hasNote).toBe(true);
+      });
+    });
+
+    // Test that each scale's tonic note is recognized correctly
+    test.each(majorScaleTests)('$key major scale should recognize its tonic note', ({ key }) => {
+      const scaleNotes = getScaleNotes(key as any, 'major');
+      expect(isNoteInScale(`${key}4`, scaleNotes)).toBe(true);
+    });
+
+    test.each(minorScaleTests)('$key minor scale should recognize its tonic note', ({ key }) => {
+      const scaleNotes = getScaleNotes(key as any, 'minor');
+      expect(isNoteInScale(`${key}4`, scaleNotes)).toBe(true);
+    });
+  })
 })

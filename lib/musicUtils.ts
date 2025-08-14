@@ -30,6 +30,7 @@ const ENHARMONIC_MAP: { [key: string]: string } = {
   "B#": "C",
   "F##": "G",
   "C##": "D",
+  "G##": "A",  // A# major scale用
   // NOTE: シャープ→フラット変換は削除（逆変換バグの原因）
 };
 
