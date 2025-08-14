@@ -78,13 +78,14 @@ export function generateKeyboardData(): KeyData[] {
       };
 
       if (isBlack) {
-        // 黒鍵の位置計算（各オクターブ内での相対位置）
+                // 黒鍵の位置計算（白鍵と白鍵の正確な中間に配置）
+        // 各白鍵の境界線の真ん中に黒鍵を配置
         const blackKeyPositions: { [key: string]: string } = {
-          "C#": "8.5%",
-          "D#": "20.5%",
-          "F#": "44.5%",
-          "G#": "56.5%",
-          "A#": "68.5%",
+          "C#": "9.5%",   // C-D間の真ん中
+          "D#": "23.5%",  // D-E間の真ん中
+          "F#": "52%",    // F-G間の真ん中
+          "G#": "66.5%",  // G-A間の真ん中 (右寄りに調整)
+          "A#": "80.5%",  // A-B間の真ん中 (右寄りに調整)
         };
         keyData.position = { left: blackKeyPositions[note] || "0%" };
       }
