@@ -24,6 +24,11 @@ const ENHARMONIC_MAP: { [key: string]: string } = {
   "Eb": "D#",
   "Gb": "F#",
   "Ab": "G#",
+  // 複雑な記号の変換（D#majorなど）
+  "E#": "F",
+  "B#": "C",
+  "F##": "G",
+  "C##": "D",
   // シャープ → フラット変換（逆引き用）
   "A#": "Bb",
   "C#": "Db",
@@ -39,7 +44,7 @@ function normalizeNoteName(note: string): string {
 }
 
 export function getScaleNotes(key: Note, scaleType: ScaleType): string[] {
-  const scaleName = scaleType === "major" ? "major" : "natural minor";
+  const scaleName = scaleType === "major" ? "major" : "minor";
   const scale = Scale.get(`${key} ${scaleName}`);
 
   // 3オクターブ分の音階を生成（C3からC5）
