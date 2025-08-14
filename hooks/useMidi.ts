@@ -13,11 +13,13 @@ export function useMidi(
     devices: [],
   });
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
-  const [midiAccess, setMidiAccess] = useState<WebMidi.MIDIAccess | null>(null);
+  const [midiAccess, setMidiAccess] = useState<MIDIAccess | null>(null);
 
   const handleMidiMessage = useCallback(
-    (event: WebMidi.MIDIMessageEvent) => {
-      const [status, noteNumber, velocity] = event.data;
+    (event: MIDIMessageEvent) => {
+      if (!event.data) return;
+      const data = Array.from(event.data);
+      const [status, noteNumber, velocity] = data;
 
       // Note On message (status 144-159)
       if (status >= 144 && status <= 159) {
@@ -93,8 +95,8 @@ export function useMidi(
       }
 
       // MIDIデバイスの接続/切断を監視
-      access.onstatechange = (event: WebMidi.MIDIConnectionEvent) => {
-        if (event.port.type === "input") {
+      access.onstatechange = (event: MIDIConnectionEvent) => {
+        if (event.port && event.port.type === "input") {
           const newDevices = Array.from(access.inputs.values());
           setMidiStatus((prev) => ({
             ...prev,
