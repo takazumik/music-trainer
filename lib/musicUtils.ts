@@ -16,6 +16,28 @@ export const ALL_NOTES: Note[] = [
   "B",
 ];
 
+// エンハーモニック（異名同音）の変換マップ
+const ENHARMONIC_MAP: { [key: string]: string } = {
+  // フラット → シャープ変換
+  "Bb": "A#",
+  "Db": "C#", 
+  "Eb": "D#",
+  "Gb": "F#",
+  "Ab": "G#",
+  // シャープ → フラット変換（逆引き用）
+  "A#": "Bb",
+  "C#": "Db",
+  "D#": "Eb", 
+  "F#": "Gb",
+  "G#": "Ab"
+};
+
+// エンハーモニック変換関数
+function normalizeNoteName(note: string): string {
+  // フラット記号をシャープ記号に統一
+  return ENHARMONIC_MAP[note] || note;
+}
+
 export function getScaleNotes(key: Note, scaleType: ScaleType): string[] {
   const scaleName = scaleType === "major" ? "major" : "natural minor";
   const scale = Scale.get(`${key} ${scaleName}`);
@@ -24,8 +46,10 @@ export function getScaleNotes(key: Note, scaleType: ScaleType): string[] {
   const scaleNotes: string[] = [];
   for (let octave = 3; octave <= 5; octave++) {
     scale.notes.forEach((note) => {
-      const fullNote = `${note}${octave}`;
-      if (octave === 5 && note !== "C") return; // C5より上は含めない
+      // フラット記号をシャープ記号に統一
+      const normalizedNote = normalizeNoteName(note);
+      const fullNote = `${normalizedNote}${octave}`;
+      if (octave === 5 && normalizedNote !== "C") return; // C5より上は含めない
       scaleNotes.push(fullNote);
     });
   }
@@ -93,9 +117,12 @@ export function midiToNote(midi: number): string {
 export function isNoteInScale(note: string, scaleNotes: string[]): boolean {
   // オクターブを無視して音名のみで比較
   const noteWithoutOctave = note.replace(/\d+$/, "");
+  const normalizedNote = normalizeNoteName(noteWithoutOctave);
+  
   return scaleNotes.some((scaleNote) => {
     const scaleNoteWithoutOctave = scaleNote.replace(/\d+$/, "");
-    return noteWithoutOctave === scaleNoteWithoutOctave;
+    const normalizedScaleNote = normalizeNoteName(scaleNoteWithoutOctave);
+    return normalizedNote === normalizedScaleNote;
   });
 }
 
